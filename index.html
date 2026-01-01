@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Infinity</title>
+  <title>💵 Infinity Pricing Engine</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
@@ -14,9 +14,12 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
+      flex-direction: column;
+      padding: 20px;
     }
     .wrap {
       text-align: center;
+      margin-bottom: 30px;
     }
     h1 {
       font-size: 3rem;
@@ -29,13 +32,120 @@
     .dot {
       color: #00e5ff;
     }
+    .machine-id {
+      font-size: 1.2rem;
+      color: #00ff88;
+      margin: 10px 0;
+      font-weight: bold;
+    }
+    .quick-stats {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+    .stat-box {
+      background: rgba(0, 229, 255, 0.1);
+      border: 1px solid rgba(0, 229, 255, 0.3);
+      border-radius: 12px;
+      padding: 15px 25px;
+      min-width: 150px;
+    }
+    .stat-label {
+      opacity: 0.7;
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #00e5ff;
+    }
+    .dashboard-link {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 15px 30px;
+      background: rgba(0, 229, 255, 0.2);
+      color: #00e5ff;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: bold;
+      border: 2px solid #00e5ff;
+      transition: all 0.3s ease;
+    }
+    .dashboard-link:hover {
+      background: rgba(0, 229, 255, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(0, 229, 255, 0.3);
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>∞ Infinity<span class="dot">.</span></h1>
-    <p>GitHub Pages online</p>
+    <p class="machine-id">💵 PRICE_ORACLE Machine</p>
+    <p>Intelligent Pricing Calculator • Andy Lian Coin Integration</p>
   </div>
+  
+  <div class="quick-stats">
+    <div class="stat-box">
+      <div class="stat-label">ALC Value</div>
+      <div class="stat-value" id="alc-value">$0.50</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Daily Volume</div>
+      <div class="stat-value" id="volume">1,250</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Capacitor</div>
+      <div class="stat-value" id="capacitor">⚡ 50%</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Status</div>
+      <div class="stat-value" id="status">🟢 Active</div>
+    </div>
+  </div>
+  
+  <a href="dashboard/pricing-interface.html" class="dashboard-link">
+    🎯 Open Price Oracle Dashboard
+  </a>
+  
+  <script>
+    // Load pricing data and update stats
+    async function loadPricingData() {
+      try {
+        const response = await fetch('.infinity/alc-pricing.json');
+        const data = await response.json();
+        
+        if (data.andy_lian_coin) {
+          const alcValueEl = document.getElementById('alc-value');
+          if (alcValueEl) {
+            alcValueEl.textContent = '$' + data.andy_lian_coin.current_usd_value.toFixed(2);
+          }
+          
+          const volumeEl = document.getElementById('volume');
+          if (volumeEl) {
+            volumeEl.textContent = data.andy_lian_coin.daily_volume.toLocaleString();
+          }
+        }
+      } catch (error) {
+        console.log('Pricing data will be available when deployed');
+      }
+    }
+    
+    // Animate capacitor charge
+    function animateCapacitor() {
+      const capacitorEl = document.getElementById('capacitor');
+      if (capacitorEl) {
+        const charge = 45 + Math.random() * 10;
+        capacitorEl.textContent = '⚡ ' + Math.round(charge) + '%';
+      }
+    }
+    
+    loadPricingData();
+    setInterval(animateCapacitor, 3000);
+  </script>
 </body>
 <!-- C13B0_CHAT_WIDGET_BEGIN -->
 <style>
