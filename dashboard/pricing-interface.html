@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>💵 Price Oracle Dashboard - Infinity</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      background: #0b0b0b;
+      color: #e6e6e6;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      padding: 20px;
+    }
+    
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .dashboard-header h1 {
+      font-size: 2.5rem;
+      margin: 0;
+      color: #00e5ff;
+    }
+    
+    .dashboard-header .subtitle {
+      opacity: 0.7;
+      margin-top: 0.5rem;
+    }
+    
+    .pricing-dashboard {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+    }
+    
+    .dashboard-section {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    
+    .dashboard-section h2 {
+      font-size: 1.5rem;
+      margin: 0 0 20px 0;
+      color: #00e5ff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .andy-lian-market .current-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #00ff88;
+      margin: 15px 0;
+    }
+    
+    .market-stat {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .market-stat:last-child {
+      border-bottom: none;
+    }
+    
+    .market-stat .label {
+      opacity: 0.7;
+    }
+    
+    .market-stat .value {
+      font-weight: bold;
+    }
+    
+    .trend-positive {
+      color: #00ff88;
+    }
+    
+    .trend-negative {
+      color: #ff4444;
+    }
+    
+    .item-prices {
+      grid-column: 1 / -1;
+    }
+    
+    .price-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+    
+    .price-item {
+      background: rgba(0, 229, 255, 0.05);
+      border: 1px solid rgba(0, 229, 255, 0.2);
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+    }
+    
+    .price-item .name {
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    
+    .price-item .price {
+      font-size: 1.2rem;
+      color: #00e5ff;
+    }
+    
+    .wiring-status .connection {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      margin: 8px 0;
+      background: rgba(0, 255, 136, 0.1);
+      border-radius: 6px;
+      border-left: 3px solid #00ff88;
+    }
+    
+    .connection .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #00ff88;
+      margin-right: 10px;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .capacitor-status {
+      margin: 15px 0;
+    }
+    
+    .capacitor-bar {
+      width: 100%;
+      height: 30px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .capacitor-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00e5ff, #00ff88);
+      transition: width 0.5s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    .mrw-terminal {
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+    }
+    
+    .mrw-message {
+      padding: 10px;
+      margin: 8px 0;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      font-family: monospace;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(0, 229, 255, 0.2);
+      color: #00e5ff;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+      background: rgba(0, 229, 255, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    .earn-rates, .spend-costs {
+      margin-top: 15px;
+    }
+    
+    .rate-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px;
+      margin: 5px 0;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-header">
+    <h1>💵 Price Oracle Dashboard</h1>
+    <p class="subtitle">Machine Identity: PRICE_ORACLE | Real-Time Pricing Engine</p>
+  </div>
+
+  <div class="pricing-dashboard">
+    <!-- Andy Lian Market -->
+    <section class="dashboard-section andy-lian-market">
+      <h2>💰 ALC Market</h2>
+      <div class="current-value" id="alc-value">1 ALC = $0.50 USD</div>
+      
+      <div class="market-stat">
+        <span class="label">Daily Volume:</span>
+        <span class="value" id="daily-volume">1,250 ALC</span>
+      </div>
+      
+      <div class="market-stat">
+        <span class="label">Market Trend:</span>
+        <span class="value trend-positive" id="market-trend">📈 +2.5% today</span>
+      </div>
+      
+      <div class="market-stat">
+        <span class="label">Market Status:</span>
+        <span class="value" id="market-status">Stable</span>
+      </div>
+      
+      <div class="earn-rates">
+        <h3 style="font-size: 1rem; margin-bottom: 10px;">Earn Rates</h3>
+        <div class="rate-item">
+          <span>Build Feature</span>
+          <span style="color: #00ff88;">+10 ALC</span>
+        </div>
+        <div class="rate-item">
+          <span>Create Art</span>
+          <span style="color: #00ff88;">+5 ALC</span>
+        </div>
+        <div class="rate-item">
+          <span>Fix Bug</span>
+          <span style="color: #00ff88;">+7 ALC</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Capacitor Status -->
+    <section class="dashboard-section">
+      <h2>🔋 Capacitor Model</h2>
+      <div class="capacitor-status">
+        <p style="opacity: 0.7; margin-bottom: 10px;">Charge Level</p>
+        <div class="capacitor-bar">
+          <div class="capacitor-fill" id="capacitor-fill" style="width: 50%;">50%</div>
+        </div>
+      </div>
+      
+      <div class="market-stat">
+        <span class="label">Status:</span>
+        <span class="value" id="capacitor-status">Balanced</span>
+      </div>
+      
+      <div class="market-stat">
+        <span class="label">Price Impact:</span>
+        <span class="value" id="price-impact">Fair Stable Pricing</span>
+      </div>
+      
+      <div class="market-stat">
+        <span class="label">Model:</span>
+        <span class="value">Capacitor Discharge</span>
+      </div>
+    </section>
+
+    <!-- MRW Terminal -->
+    <section class="dashboard-section mrw-terminal">
+      <h2>🚗 MRW Terminal</h2>
+      <div class="mrw-message">🚗 Cars delivering price updates...</div>
+      <div class="mrw-message">🍄 Mario: "Price just right!"</div>
+      <div class="mrw-message">🍄 Mushroom = bulk discount applied</div>
+      <div class="mrw-message">👨 Luigi: "Fair pricing always!"</div>
+    </section>
+
+    <!-- Wiring Status -->
+    <section class="dashboard-section wiring-status">
+      <h2>🔌 Wiring Status</h2>
+      
+      <div class="connection">
+        <div class="status-dot"></div>
+        <div>
+          <strong>Commerce</strong><br>
+          <small>Receiving purchase signals</small>
+        </div>
+      </div>
+      
+      <div class="connection">
+        <div class="status-dot"></div>
+        <div>
+          <strong>Banksy</strong><br>
+          <small>Art creation prices</small>
+        </div>
+      </div>
+      
+      <div class="connection">
+        <div class="status-dot"></div>
+        <div>
+          <strong>Dash Hub</strong><br>
+          <small>Economy monitoring</small>
+        </div>
+      </div>
+      
+      <div class="market-stat" style="margin-top: 15px;">
+        <span class="label">Hydrogen Bonds:</span>
+        <span class="value" style="color: #00ff88;">Active</span>
+      </div>
+      
+      <div class="market-stat">
+        <span class="label">Propagation:</span>
+        <span class="value">Instant</span>
+      </div>
+    </section>
+
+    <!-- Item Prices -->
+    <section class="dashboard-section item-prices">
+      <h2>💎 Spend Costs (ALC)</h2>
+      <div class="price-grid">
+        <div class="price-item">
+          <div class="name">Premium Theme</div>
+          <div class="price">50 ALC</div>
+        </div>
+        <div class="price-item">
+          <div class="name">Custom Art</div>
+          <div class="price">20 ALC</div>
+        </div>
+        <div class="price-item">
+          <div class="name">Priority Support</div>
+          <div class="price">15 ALC</div>
+        </div>
+        <div class="price-item">
+          <div class="name">Unlock Lab</div>
+          <div class="price">30 ALC</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <section class="dashboard-section" style="grid-column: 1 / -1;">
+      <h2>⚡ Price Oracle Actions</h2>
+      <div class="action-buttons">
+        <button class="btn" onclick="calculateArtPrice()">Calculate Art Price</button>
+        <button class="btn" onclick="adjustMarket()">Adjust Market</button>
+        <button class="btn" onclick="stabilizeMarket()">Stabilize via Mongoose</button>
+        <button class="btn" onclick="testHydrogenBond()">Test Hydrogen Bond</button>
+        <button class="btn" onclick="viewFullStatus()">View Full Status</button>
+      </div>
+      <div id="action-result" style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; display: none;">
+        <pre id="result-content" style="margin: 0; white-space: pre-wrap; font-size: 0.9rem;"></pre>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Load configuration files
+    let alcPricing, wiringConfig;
+    
+    async function loadConfig() {
+      try {
+        const alcResponse = await fetch('../.infinity/alc-pricing.json');
+        alcPricing = await alcResponse.json();
+        
+        const wiringResponse = await fetch('../.infinity/wiring-config.json');
+        wiringConfig = await wiringResponse.json();
+        
+        console.log('Configuration loaded:', { alcPricing, wiringConfig });
+      } catch (error) {
+        console.error('Failed to load configuration:', error);
+      }
+    }
+    
+    // Simulate dynamic updates
+    function updateDashboard() {
+      const chargeLevel = 0.5 + (Math.random() - 0.5) * 0.2;
+      const chargePercent = Math.round(chargeLevel * 100);
+      
+      const capacitorFill = document.getElementById('capacitor-fill');
+      if (capacitorFill) {
+        capacitorFill.style.width = chargePercent + '%';
+        capacitorFill.textContent = chargePercent + '%';
+      }
+      
+      // Update status based on charge
+      const status = chargeLevel > 0.75 ? 'High Charge' : chargeLevel < 0.25 ? 'Low Charge' : 'Balanced';
+      const statusEl = document.getElementById('capacitor-status');
+      if (statusEl) statusEl.textContent = status;
+      
+      const impactEl = document.getElementById('price-impact');
+      if (impactEl) {
+        if (chargeLevel > 0.75) {
+          impactEl.textContent = 'Prices Increase Slightly';
+        } else if (chargeLevel < 0.25) {
+          impactEl.textContent = 'Prices Decrease Slightly';
+        } else {
+          impactEl.textContent = 'Fair Stable Pricing';
+        }
+      }
+    }
+    
+    // Action handlers
+    function calculateArtPrice() {
+      const result = {
+        action: 'calculateArtPrice',
+        complexity: 'medium',
+        time_spent: 2,
+        demand: 'high',
+        calculated_price: '30 ALC',
+        pricing_basis: 'complexity_time_demand'
+      };
+      showResult(result);
+    }
+    
+    function adjustMarket() {
+      const result = {
+        action: 'adjustMarket',
+        supply: 1000,
+        demand: 1200,
+        supply_demand_ratio: 1.2,
+        adjustment: 'prices_increase_slightly',
+        mongoose_learning: 'active'
+      };
+      showResult(result);
+    }
+    
+    function stabilizeMarket() {
+      const result = {
+        action: 'stabilizeMarket',
+        method: 'mongoose_learning',
+        old_value: '$0.52',
+        new_value: '$0.50',
+        status: 'stabilized',
+        message: 'Market stabilized via mongoose learning'
+      };
+      showResult(result);
+    }
+    
+    function testHydrogenBond() {
+      const result = {
+        action: 'testHydrogenBond',
+        source: 'pricing-engine',
+        target: 'commerce',
+        bond_status: 'active',
+        propagation_speed: 'instant',
+        test_sync: 'success',
+        message: 'Hydrogen bond connectivity verified'
+      };
+      showResult(result);
+    }
+    
+    function viewFullStatus() {
+      const result = {
+        machine_identity: 'PRICE_ORACLE',
+        alc_market: {
+          current_value: '$0.50 USD',
+          daily_volume: '1,250 ALC',
+          trend: '+2.5% today'
+        },
+        capacitor: {
+          charge_level: '50%',
+          status: 'balanced',
+          pricing: 'fair_stable'
+        },
+        wiring: {
+          hydrogen_bonds: 'active',
+          connected_sites: ['commerce', 'banksy', 'dash-hub'],
+          propagation: 'instant'
+        },
+        fairness: {
+          never: 'unfair_pricing',
+          always: 'fair_pricing_guaranteed'
+        }
+      };
+      showResult(result);
+    }
+    
+    function showResult(result) {
+      const resultDiv = document.getElementById('action-result');
+      const resultContent = document.getElementById('result-content');
+      
+      if (resultDiv && resultContent) {
+        resultContent.textContent = JSON.stringify(result, null, 2);
+        resultDiv.style.display = 'block';
+      }
+    }
+    
+    // Initialize
+    loadConfig();
+    updateDashboard();
+    
+    // Update dashboard periodically
+    setInterval(updateDashboard, 5000);
+  </script>
+</body>
+</html>

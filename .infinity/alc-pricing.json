@@ -1,0 +1,40 @@
+{
+  "andy_lian_coin": {
+    "base_value": "1 ALC = 1 contribution",
+    "current_usd_value": 0.50,
+    "daily_volume": 1250,
+    "trend_percent": 2.5,
+    
+    "earn_rates": {
+      "build_feature": 10,
+      "create_art": 5,
+      "help_user": 3,
+      "fix_bug": 7,
+      "write_docs": 4
+    },
+    
+    "spend_costs": {
+      "premium_theme": 50,
+      "custom_art": 20,
+      "priority_support": 15,
+      "unlock_lab": 30
+    },
+    
+    "market_forces": {
+      "increases_when": "high_demand",
+      "decreases_when": "abundant_supply",
+      "stabilizes": "via_mongoose_learning",
+      "volatility": 0.15
+    }
+  },
+  
+  "pricing_model": {
+    "type": "capacitor_discharge",
+    "charge_accumulation": "from_activity",
+    "discharge_trigger": "on_purchase",
+    "balance_threshold": 0.75
+  },
+  
+  "machine_identity": "PRICE_ORACLE",
+  "last_updated": "2026-01-01T10:17:00Z"
+}
