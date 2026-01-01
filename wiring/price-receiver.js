@@ -8,6 +8,7 @@ class PriceReceiver {
     this.config = wiringConfig.wiring_configuration;
     this.signalHandlers = new Map();
     this.receivedSignals = [];
+    this.maxSignalHistory = 100; // Configurable signal history limit
     this.setupHandlers();
   }
 
@@ -46,8 +47,8 @@ class PriceReceiver {
       handler: handlerName
     });
 
-    // Keep only last 100 signals
-    if (this.receivedSignals.length > 100) {
+    // Keep only last N signals
+    if (this.receivedSignals.length > this.maxSignalHistory) {
       this.receivedSignals.shift();
     }
 

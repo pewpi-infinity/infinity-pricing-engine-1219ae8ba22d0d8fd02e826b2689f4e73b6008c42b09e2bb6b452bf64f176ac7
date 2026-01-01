@@ -8,6 +8,7 @@ class PriceBroadcaster {
     this.config = wiringConfig.wiring_configuration;
     this.broadcastTargets = new Map();
     this.sentUpdates = [];
+    this.maxUpdateHistory = 100; // Configurable update history limit
     this.setupTargets();
   }
 
@@ -48,7 +49,7 @@ class PriceBroadcaster {
 
     // Record the update
     this.sentUpdates.push(update);
-    if (this.sentUpdates.length > 100) {
+    if (this.sentUpdates.length > this.maxUpdateHistory) {
       this.sentUpdates.shift();
     }
 

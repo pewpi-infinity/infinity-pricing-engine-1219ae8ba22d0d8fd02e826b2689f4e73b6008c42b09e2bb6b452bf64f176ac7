@@ -9,6 +9,7 @@ class FairPricing {
     this.priceCeiling = 10000;  // Maximum price (in ALC)
     this.maxChangeRate = 0.25;  // Max 25% change per update
     this.priceHistory = [];
+    this.maxPriceHistory = 100; // Configurable price history limit
     this.fairnessScore = 1.0;
   }
 
@@ -51,8 +52,8 @@ class FairPricing {
 
     // Record this price
     this.priceHistory.push(price);
-    if (this.priceHistory.length > 100) {
-      this.priceHistory.shift(); // Keep only last 100 prices
+    if (this.priceHistory.length > this.maxPriceHistory) {
+      this.priceHistory.shift(); // Keep only last N prices
     }
 
     return {
